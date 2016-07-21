@@ -57,7 +57,27 @@ object WarmupSpec extends test.Spec {
     "reverse twice is identity" ! prop((xs: List[Int]) =>
       reverse(reverse(xs)) == xs)
 
-    "ranges example" ! {
+    "List() ranges example" ! {
+      ranges(List()) must_== List()
+    }
+
+    "List(1, 1) ranges example" ! {
+      ranges(List(1, 1)) must_== List((1, 1))
+    }
+
+    "List(1) ranges example" ! {
+      ranges(List(1)) must_== List((1, 1))
+    }
+
+    "List(1, 2, 3, 4) ranges example" ! {
+      ranges(List(1, 2, 3, 4)) must_== List((1, 4))
+    }
+
+    "List(1, 2, 4) ranges example" ! {
+      ranges(List(1, 2, 4)) must_== List((1, 2), (4, 4))
+    }
+
+    "List(1, 2, 3, 4, 7, 8, 9, 10, 30, 40, 41) ranges example" ! {
       ranges(List(1, 2, 3, 4, 7, 8, 9, 10, 30, 40, 41)) must_== List((1, 4), (7, 10), (30, 30), (40, 41))
     }
   }

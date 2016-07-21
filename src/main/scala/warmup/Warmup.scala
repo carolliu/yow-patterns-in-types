@@ -81,7 +81,10 @@ object Warmup {
    * resX: List[Int] = List(1, 2, 3, 4, 5, 6, 7, 8)
    */
   def append[A](x: List[A], y: List[A]): List[A] =
-    ???
+    x match {
+       case Nil => y
+       case xHead :: xTail => xHead :: append(xTail, y)
+    }
 
   /*
    * Exercise: 0.2:
@@ -99,8 +102,10 @@ object Warmup {
    *     Type annotations are required when scala can
    *     not infer what you mean.
    */
-  def map[A, B](xs: List[A])(f: A => B): List[B] =
-    ???
+  def map[A, B](xs: List[A])(f: A => B): List[B] = xs match {
+    case Nil => Nil
+    case xHead :: xTail => f(xHead) :: map(xTail)(f)
+  }
 
   /*
    * Exercise: 0.3:
@@ -111,8 +116,11 @@ object Warmup {
    * scala> filter(List(1, 2, 3, 4))(i => i < 3)
    * resX: List[Int] = List(1, 2)
    */
-  def filter[A](xs: List[A])(p: A => Boolean): List[A] =
-    ???
+  def filter[A](xs: List[A])(p: A => Boolean): List[A] = xs match {
+    case Nil => Nil
+    case xHead :: xTail if p(xHead) => xHead :: filter(xTail)(p)
+    case _ :: xTail => filter(xTail)(p)
+  }
 
   /*
    * Exercise: 0.4:
@@ -132,8 +140,10 @@ object Warmup {
    *     Type annotations are required when scala can
    *     not infer what you mean.
    */
-  def reverse[A](xs: List[A]): List[A] =
-    ???
+  def reverse[A](xs: List[A]): List[A] = xs match {
+    case Nil => Nil
+    case _ => xs.last :: reverse(xs.init)
+  }
 
   /*
    * *Challenge* Exercise: 0.5:
@@ -148,12 +158,28 @@ object Warmup {
    * resX: List[(Int, Int)] = List((1, 4))
    * scala> ranges(List(1, 2, 4))
    * resX: List[(Int, Int)] = List((1, 2), List(4, 4))
-   * scala> ranges(List(2, 1, 3, 4, 9, 7, 8, 10, 30, 30, 4, 41))
+   * scala> ranges(List(2, 1, 3, 4, 9, 7, 8, 10, 30, 40, 41))
    * resX: List[(Int, Int)] = List((1, 4), (7, 10), (30, 30), (40, 41))
    *
    * ~~~ library hint: use can just use List[A]#sorted to sort the list before you start.
    * ~~~ library hint: List[A]#min and List#max exist.
    */
-  def ranges(xs: List[Int]): List[(Int, Int)] =
-    ???
+  def ranges(xs: List[Int]): List[(Int, Int)] = {
+    def getRanges(ls: List[Int]): List[(Int, Int)] = ls match {
+      case Nil => Nil
+      case h :: Nil => List((h, h))
+      case h :: t => {
+        val (l1, l2) = ls.partition(_ <= findNext(h, t))
+        (l1.min, l1.max) :: getRanges(l2)
+      }
+    }
+
+    def findNext(num: Int, ys: List[Int]): Int = ys match {
+      case h :: t if (h == num+1) => findNext(h, t)
+      case _ => num
+    }
+
+    getRanges(xs.sorted)
+  }
+
 }
